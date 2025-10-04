@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 
 const Home = () => (
   <>
-    <div className="pt-20 max-w-5xl mx-auto px-4">
+  <div className="max-w-5xl mx-auto px-4">
       <Hero />
       <About />
       <Projects />

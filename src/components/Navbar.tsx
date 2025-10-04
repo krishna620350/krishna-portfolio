@@ -1,19 +1,30 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 
 const NAV_LINKS = [
     { href: "#home", label: "🏠 Home" },
     { href: "#about", label: "🙋‍♂️ About" },
-    { href: "#projects", label: "💼 Prohect" },
-    { href: "#experience", label: "🧑‍💻 Exprience" },
+    { href: "#projects", label: "💼 Project" },
+    { href: "#experience", label: "🧑‍💻 Experience" },
     { href: "#contact", label: "✉️ Contact" },
 ];
 
 const Navbar = () => {
 	const [open, setOpen] = useState(false);
-	   return (
-		   <nav className="w-full text-white py-4 fixed top-0 left-0 z-50 shadow">
+	const [isTop, setIsTop] = useState(true);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			setIsTop(window.scrollY < 5);
+		};
+		window.addEventListener("scroll", handleScroll);
+		handleScroll();
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+
+	return (
+		<nav className={`w-full text-white py-4 fixed top-0 left-0 z-50 shadow backdrop-blur-md ${isTop ? "" : "bg-black/40"}`}>
 			   <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-16">
 				   <div className="flex items-center gap-4">
 					   <span className="font-bold text-xl flex items-center gap-2">
