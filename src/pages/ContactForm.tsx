@@ -1,11 +1,8 @@
 import { useState, useRef } from "react";
-import emailjs from "emailjs-com";
 import ReCAPTCHA from "react-google-recaptcha";
 
 
-const SERVICE_ID = import.meta.env.VITE_SERVICE_ID; // Replace with your EmailJS service ID
-const TEMPLATE_ID = import.meta.env.VITE_TEMP_ID; // Replace with your EmailJS template ID
-const USER_ID = import.meta.env.VITE_PUBLIC_KEY; // Replace with your EmailJS user/public key
+
 
 
 const ContactForm = () => {
@@ -19,11 +16,10 @@ const ContactForm = () => {
   // Use Vite environment variable for frontend
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
-  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendFormspree = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSent(false);
-    // Basic client-side validation
     const form = formRef.current;
     if (!form) return;
     const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
@@ -33,8 +29,7 @@ const ContactForm = () => {
       setError("All required fields must be filled.");
       return;
     }
-    // reCAPTCHA check
-    if (!captcha) {
+    if (captcha) {
       setError("Please complete the reCAPTCHA to verify you are human.");
       return;
     }
@@ -52,25 +47,40 @@ const ContactForm = () => {
     }
     timeInput.value = istString;
     setSending(true);
-    emailjs
-      .sendForm(SERVICE_ID, TEMPLATE_ID, form, USER_ID)
-      .then(() => {
+    try {
+      const formData = new FormData(form);
+      const response = await fetch("https://formspree.io/f/mkgqzglb", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      if (response.ok) {
         setSent(true);
         setSending(false);
         setCaptcha(null);
         if (formRef.current) formRef.current.reset();
-      })
-      .catch((err) => {
-        console.error("EmailJS sendForm error:", err);
+      } else {
         setError("Failed to send message. Please try again later.");
         setSending(false);
-      });
+      }
+    } catch (err) {
+      console.error("Formspree error:", err);
+      setError("Failed to send message. Please try again later.");
+      setSending(false);
+    }
   };
 
   return (
   <section id="contact" className="py-16 max-w-xl mx-auto scroll-mt-24">
       <h2 className="text-4xl font-extrabold mb-6 text-purple-400 text-center drop-shadow-lg tracking-wide">Contact Me</h2>
-  <form ref={formRef} onSubmit={sendEmail} className="flex flex-col gap-6 bg-gradient-to-br from-purple-900/80 via-gray-900/90 to-blue-900/80 p-8 rounded-2xl shadow-2xl border border-white/20 backdrop-blur-lg" autoComplete="off">
+  <form
+  ref={formRef}
+  onSubmit={sendFormspree}
+  className="flex flex-col gap-6 bg-gradient-to-br from-purple-900/80 via-gray-900/90 to-blue-900/80 p-8 rounded-2xl shadow-2xl border border-white/20 backdrop-blur-lg"
+  autoComplete="off"
+>
         <label className="flex flex-col text-left text-white font-semibold gap-1">
           <span className="inline-flex items-center">Name <span className="text-red-400 ml-1">*</span></span>
           <input name="name" type="text" placeholder="Your Name" className="px-4 py-3 rounded-lg bg-gray-900/80 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" required />
