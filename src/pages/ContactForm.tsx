@@ -29,7 +29,7 @@ const ContactForm = () => {
       setError("All required fields must be filled.");
       return;
     }
-    if (captcha) {
+    if (!captcha) {
       setError("Please complete the reCAPTCHA to verify you are human.");
       return;
     }
