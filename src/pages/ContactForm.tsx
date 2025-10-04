@@ -7,6 +7,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 const ContactForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -61,7 +62,9 @@ const ContactForm = () => {
         setSending(false);
         setCaptcha(null);
         if (formRef.current) formRef.current.reset();
+        if (recaptchaRef.current) recaptchaRef.current.reset();
       } else {
+        if (recaptchaRef.current) recaptchaRef.current.reset();
         setError("Failed to send message. Please try again later.");
         setSending(false);
       }
@@ -101,6 +104,7 @@ const ContactForm = () => {
         </label>
         <div className="flex justify-center">
           <ReCAPTCHA
+            ref={recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             onChange={(token: string | null) => setCaptcha(token)}
             theme="dark"
