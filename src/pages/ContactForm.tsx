@@ -3,9 +3,9 @@ import emailjs from "emailjs-com";
 import ReCAPTCHA from "react-google-recaptcha";
 
 
-const SERVICE_ID = "your_service_id"; // Replace with your EmailJS service ID
-const TEMPLATE_ID = "your_template_id"; // Replace with your EmailJS template ID
-const USER_ID = "your_user_id"; // Replace with your EmailJS user/public key
+const SERVICE_ID = import.meta.env.VITE_SERVICE_ID; // Replace with your EmailJS service ID
+const TEMPLATE_ID = import.meta.env.VITE_TEMP_ID; // Replace with your EmailJS template ID
+const USER_ID = import.meta.env.VITE_PUBLIC_KEY; // Replace with your EmailJS user/public key
 
 
 const ContactForm = () => {
@@ -26,8 +26,8 @@ const ContactForm = () => {
     // Basic client-side validation
     const form = formRef.current;
     if (!form) return;
-    const name = (form.elements.namedItem("user_name") as HTMLInputElement)?.value.trim();
-    const email = (form.elements.namedItem("user_email") as HTMLInputElement)?.value.trim();
+    const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
+    const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
     const message = (form.elements.namedItem("message") as HTMLInputElement)?.value.trim();
     if (!name || !email || !message) {
       setError("All required fields must be filled.");
@@ -38,6 +38,19 @@ const ContactForm = () => {
       setError("Please complete the reCAPTCHA to verify you are human.");
       return;
     }
+    // Set system time in IST for the 'time' field
+    const now = new Date();
+    const istOffset = 5.5 * 60; // IST is UTC+5:30
+    const istTime = new Date(now.getTime() + (istOffset + now.getTimezoneOffset()) * 60000);
+    const istString = istTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    let timeInput = form.elements.namedItem("time") as HTMLInputElement;
+    if (!timeInput) {
+      timeInput = document.createElement("input");
+      timeInput.type = "hidden";
+      timeInput.name = "time";
+      form.appendChild(timeInput);
+    }
+    timeInput.value = istString;
     setSending(true);
     emailjs
       .sendForm(SERVICE_ID, TEMPLATE_ID, form, USER_ID)
@@ -45,25 +58,29 @@ const ContactForm = () => {
         setSent(true);
         setSending(false);
         setCaptcha(null);
+        if (formRef.current) formRef.current.reset();
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("EmailJS sendForm error:", err);
         setError("Failed to send message. Please try again later.");
         setSending(false);
       });
   };
 
   return (
-    <section id="contact" className="py-16 max-w-xl mx-auto">
+  <section id="contact" className="py-16 max-w-xl mx-auto scroll-mt-24">
       <h2 className="text-4xl font-extrabold mb-6 text-purple-400 text-center drop-shadow-lg tracking-wide">Contact Me</h2>
   <form ref={formRef} onSubmit={sendEmail} className="flex flex-col gap-6 bg-gradient-to-br from-purple-900/80 via-gray-900/90 to-blue-900/80 p-8 rounded-2xl shadow-2xl border border-white/20 backdrop-blur-lg" autoComplete="off">
         <label className="flex flex-col text-left text-white font-semibold gap-1">
           <span className="inline-flex items-center">Name <span className="text-red-400 ml-1">*</span></span>
-          <input name="user_name" type="text" placeholder="Your Name" className="px-4 py-3 rounded-lg bg-gray-900/80 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" required />
+          <input name="name" type="text" placeholder="Your Name" className="px-4 py-3 rounded-lg bg-gray-900/80 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" required />
         </label>
         <label className="flex flex-col text-left text-white font-semibold gap-1">
           <span className="inline-flex items-center">Email <span className="text-red-400 ml-1">*</span></span>
-          <input name="user_email" type="email" placeholder="Your Email" className="px-4 py-3 rounded-lg bg-gray-900/80 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" required />
+          <input name="email" type="email" placeholder="Your Email" className="px-4 py-3 rounded-lg bg-gray-900/80 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" required />
         </label>
+  {/* Hidden input for IST time will be set dynamically before submit */}
+  <input type="hidden" name="time" />
         <label className="flex flex-col text-left text-white font-semibold gap-1">
           File (optional)
           <input name="user_file" type="file" className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 bg-gray-900/80 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm" />
