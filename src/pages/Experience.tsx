@@ -1,7 +1,7 @@
 
 
 const Experience = () => (
-  <section id="experience" className="py-16">
+  <section id="experience" className="py-16" style={{ scrollMarginTop: '88px' }}>
     <h2 className="text-3xl font-bold mb-8 text-green-400 text-center">Experience</h2>
     <div className="space-y-8 max-w-3xl mx-auto">
       <div className="bg-white/10 rounded-xl shadow p-6 border border-white/20">

@@ -1,6 +1,5 @@
 
 import Navbar from "./components/Navbar";
-import PageSpacer from "./components/PageSpacer";
 import Home from "./pages/Home";
 import EmojiFlood from "./components/EmojiFlood";
 import "./App.css";
@@ -18,7 +17,7 @@ function App() {
       <div className="fixed inset-0 z-10 pointer-events-none" style={{background: "rgba(5, 5, 5, 0.85)"}} />
       <div className="relative z-20">
   <Navbar />
-  <PageSpacer />
+
   <Home />
       </div>
     </div>

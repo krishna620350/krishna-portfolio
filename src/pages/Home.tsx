@@ -1,7 +1,7 @@
 import Hero from './Hero';
 import About from './About';
-import Projects from '../components/Projects';
-import Experience from '../components/Experience';
+import Projects from './Projects';
+import Experience from './Experience';
 import ContactForm from './ContactForm';
 import Footer from '../components/Footer';
 

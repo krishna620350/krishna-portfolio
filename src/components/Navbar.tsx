@@ -28,7 +28,7 @@ const Navbar = () => {
 			   <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-16">
 				   <div className="flex items-center gap-4">
 					   <span className="font-bold text-xl flex items-center gap-2">
-						   <a href="/" className="focus:outline-none" aria-label="Home">
+						   <a href="#home" className="focus:outline-none" aria-label="Home">
 							   <div className="size-12 rounded-full bg-[radial-gradient(at_25%_25%,white,theme(colors.zinc.900)_75%)] flex items-center justify-center p-2">
 								   <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
 							   </div>
