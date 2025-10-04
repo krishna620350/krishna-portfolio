@@ -55,7 +55,7 @@ const Navbar = () => {
 			{/* Mobile right-side panel */}
 			{open && (
 				<div className="fixed inset-0 z-50 bg-black/60 flex justify-end md:hidden">
-					<div className="w-64 h-full bg-gray-900 shadow-lg flex flex-col p-6 animate-slide-in">
+					<div className="w-64 h-screen bg-gray-900 shadow-lg flex flex-col p-6 animate-slide-in">
 						<button
 							className="self-end mb-8 text-2xl text-gray-400 hover:text-white focus:outline-none"
 							aria-label="Close menu"
